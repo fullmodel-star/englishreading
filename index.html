@@ -59,6 +59,10 @@ body.hasnav .botnav{display:flex}
 .btn:active{transform:translateY(1px) scale(.99);box-shadow:0 3px 10px rgba(79,110,247,.24)}
 .btn.sec{background:var(--soft);color:var(--blue);box-shadow:none}
 .btn.ghost{background:#fff;color:var(--ink);border:1px solid #dde5f5;box-shadow:none}
+.install-btn{display:flex;align-items:center;gap:8px;width:100%;border:0;border-radius:15px;padding:14px 16px;font-size:15px;font-weight:800;cursor:pointer;background:#eafaf1;color:#128049;margin:0 0 12px;box-shadow:var(--sh2)}
+.install-btn.sec{background:var(--soft);color:var(--blue)}
+.install-tip{background:#fff7e6;border:1px solid #ffe0a3;border-radius:15px;padding:14px;font-size:14px;line-height:1.9;margin:0 0 12px}
+.install-tip .install-x{display:inline-block;margin-top:8px;color:var(--blue);font-weight:800;cursor:pointer}
 .btn[disabled]{opacity:.5;box-shadow:none}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .tile{background:var(--card);border-radius:var(--r);padding:18px;min-height:158px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;cursor:pointer;border:1px solid rgba(233,238,251,.7);box-shadow:var(--sh2);transition:transform .14s}
@@ -251,6 +255,7 @@ function scHome(){
   const streak=streakOf(d), todayActive=(d.log||[]).some(l=>Math.floor(l.ts/86400000)===today());
   const gp=skillProgress('grammar'),rp=skillProgress('reading'),vp=skillProgress('vocab');
   let h=`<div style="display:flex;align-items:center;gap:12px;margin:2px 2px 14px"><div class="ava">${c.emoji}</div><div><div style="font-weight:800;font-size:18px">哈囉，${esc(c.name)}！</div><div class="muted">🔥 連續學習 ${streak} 天${todayActive?'　今天已練習 👍':'　今天還沒開始喔'}</div></div></div>`;
+  h+='<div id="installBar"></div>';
   const ss=d.session;
   if(ss&&ss.ids&&ss.i<ss.ids.length){const rem=ss.ids.length-ss.i;const nm={grammar:'文法',reading:'閱讀',vocab:'單字',mix:'錯題複習'}[ss.type]||'複習';
     h+=`<div class="card" style="background:var(--grad);color:#fff;position:relative;box-shadow:0 8px 20px rgba(79,110,247,.28)"><div style="cursor:pointer" onclick="resumeSession()"><div style="font-weight:800;font-size:18px">▶ 繼續上次複習</div><div style="opacity:.92;margin-top:3px">${nm}　還剩 ${rem} 題</div></div><button onclick="clearSession();go('home')" aria-label="開新的" style="position:absolute;top:8px;right:10px;background:rgba(255,255,255,.28);color:#fff;border:0;border-radius:8px;width:30px;height:28px;font-size:15px;cursor:pointer">✕</button></div>`;}
@@ -265,6 +270,7 @@ function scHome(){
   h+=`<div class="tile" style="background:#fff7e6" onclick="startVocab('__MY__')"><div class="ico">⭐</div><div class="t">我的單字</div><div class="s">${Object.keys(d.myVocab||{}).length} 字${myDue?` · 待複習 ${myDue}`:''}</div></div>`;
   h+='</div>';
   view.innerHTML=h;
+  renderInstallBar();
   if(!(d.log||[]).length){const nb=$('<button class="btn" style="background:#1e8e4e">🌱 新手起步：從文法「基礎」開始 ▶</button>');nb.onclick=()=>{gDiff='1';go('units','grammar');};view.appendChild(nb);}
 }
 function scReview(){
@@ -632,6 +638,20 @@ function exportP(){try{const c=curProfile();const blob=new Blob([JSON.stringify(
   setTimeout(()=>URL.revokeObjectURL(a.href),1000);alert('已匯出進度檔');}catch(e){alert('匯出失敗，請改用支援下載的瀏覽器\n('+e.message+')')}}
 function importP(){const inp=document.createElement('input');inp.type='file';inp.accept='.json';
   inp.onchange=e=>{const f=e.target.files[0];const r=new FileReader();r.onload=()=>{try{const o=JSON.parse(r.result);if(!o.profile||!o.profile.id)throw new Error('格式錯誤');if(profiles().some(x=>x.id===o.profile.id)&&!confirm('「'+o.profile.name+'」已存在，匯入會覆蓋現有進度，確定要覆蓋嗎？'))return;const nm=importData(o);alert('已匯入 '+nm+' 的進度');go('home');}catch(err){alert('檔案讀取失敗：'+err.message)}};r.readAsText(f)};inp.click();}
+
+// ---------- 安裝到桌面 (PWA) ----------
+let deferredPrompt=null;
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;renderInstallBar();});
+window.addEventListener('appinstalled',()=>{deferredPrompt=null;renderInstallBar();try{toast('已安裝到桌面 🎉');}catch(e){}});
+function isStandalone(){return (window.matchMedia&&window.matchMedia('(display-mode: standalone)').matches)||navigator.standalone===true;}
+function isIOSDevice(){return /iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);}
+function renderInstallBar(){const el=document.getElementById('installBar');if(!el)return;if(isStandalone()){el.innerHTML='';return;}
+  if(deferredPrompt){el.innerHTML=`<button class="install-btn" onclick="doInstall()"><span>📲</span>安裝到桌面（免開瀏覽器）<span style="margin-left:auto">➕</span></button>`;}
+  else if(isIOSDevice()){el.innerHTML=`<button class="install-btn sec" onclick="showIOSInstall()"><span>📲</span>安裝到主畫面（iPad / iPhone）<span style="margin-left:auto">›</span></button>`;}
+  else{el.innerHTML='';}}
+function doInstall(){if(!deferredPrompt){try{toast('此瀏覽器暫不支援一鍵安裝，可用瀏覽器選單的「安裝應用程式／加到主畫面」');}catch(e){}return;}deferredPrompt.prompt();deferredPrompt.userChoice.finally(()=>{deferredPrompt=null;renderInstallBar();});}
+function showIOSInstall(){const el=document.getElementById('installBar');if(!el)return;el.innerHTML=`<div class="install-tip">📲 <b>加到 iPad / iPhone 桌面：</b><br>1. 用 <b>Safari</b> 開啟本頁<br>2. 點下方或右上的「分享 ⬆️」<br>3. 往下找「<b>加入主畫面 ➕</b>」<br>4. 右上按「新增」就完成了<br><span class="install-x" onclick="renderInstallBar()">知道了 ✓</span></div>`;}
+window.doInstall=doInstall;window.showIOSInstall=showIOSInstall;
 
 // ---------- 啟動 ----------
 if(LS.getItem('eng.big'))document.body.classList.add('big');

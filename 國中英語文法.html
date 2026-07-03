@@ -4,13 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#7b5bd6">
-<title>英語文法</title>
+<title>國中英語文法</title>
 <link rel="manifest" href="manifest.json">
 <!-- iOS (Safari) 加到主畫面 -->
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="英語文法">
+<meta name="apple-mobile-web-app-title" content="國中英語文法">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
@@ -107,7 +107,7 @@ input,select{font-size:16px;padding:12px;border:1px solid #dde5f5;border-radius:
 </head>
 <body>
 <div id="app">
-  <div class="topbar"><button class="backbtn" id="backbtn" onclick="goBack()" aria-label="上一頁" style="display:none">←</button><h1 id="title">英語文法</h1><span class="who" id="who" onclick="go('home')"></span></div>
+  <div class="topbar"><button class="backbtn" id="backbtn" onclick="goBack()" aria-label="上一頁" style="display:none">←</button><h1 id="title">國中英語文法</h1><span class="who" id="who" onclick="go('home')"></span></div>
   <div class="wrap" id="view"></div>
   <div class="botnav" id="botnav">
     <button data-nav="home" onclick="go('home')"><i>🏠</i><span>首頁</span></button>
@@ -181,7 +181,7 @@ function go(s,arg){ if(curNav.s && curNav.s!==s){navStack.push(curNav); if(navSt
 function goBack(){ const prev=navStack.pop(); if(prev){curNav=prev;render(prev.s,prev.arg);} else {curNav={s:'home'};render('home');} window.scrollTo(0,0); }
 function scConsent(){
   who.style.display='none'; const bb=document.getElementById('backbtn'); if(bb)bb.style.display='none'; title.textContent='使用前說明';
-  view.innerHTML=`<div class="card" style="line-height:1.9;font-size:15px"><div class="h2">📖 歡迎使用英語文法</div>本 App 的題目、閱讀短文與解析皆為 <b>AI 全新原創</b>，依國中課綱範圍編寫，非任何出版社教材，可自由使用。<br><br>單字為教育部課綱字表，例句由 AI 撰寫。內容僅供學習參考。<br><br>學習進度只存在<b>這台裝置的瀏覽器</b>，不會上傳任何資料。</div>`;
+  view.innerHTML=`<div class="card" style="line-height:1.9;font-size:15px"><div class="h2">📖 歡迎使用國中英語文法</div>本 App 的題目、閱讀短文與解析皆為 <b>AI 全新原創</b>，依國中課綱範圍編寫，非任何出版社教材，可自由使用。<br><br>單字為教育部課綱字表，例句由 AI 撰寫。內容僅供學習參考。<br><br>學習進度只存在<b>這台裝置的瀏覽器</b>，不會上傳任何資料。</div>`;
   const b=$('<button class="btn">我了解，開始使用 ▶</button>'); b.onclick=()=>{LS.setItem('eng.consent','1');go('profiles')}; view.appendChild(b);
 }
 function render(s,arg){
@@ -244,7 +244,7 @@ function ring(pct,color){return `<div class="ring" style="--p:${pct};--rc:${colo
 function pool(type){ if(type==='vocab')return DATA.vocab; return DATA.questions.filter(q=>q.type===type&&readable(q)); }
 function streakOf(d){const days=new Set((d.log||[]).map(l=>Math.floor(l.ts/86400000)));let day=today();if(!days.has(day))day--;let s=0;while(days.has(day)){s++;day--;}return s;}
 function scHome(){
-  title.textContent='英語文法';
+  title.textContent='國中英語文法';
   const d=P(), c=curProfile();
   const myDue=myDueCount();
   const totDue=dueCount('grammar')+dueCount('reading')+dueCount('vocab')+myDue;

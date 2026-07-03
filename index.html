@@ -15,7 +15,7 @@
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
 <style>
-:root{--blue:#4f6ef7;--blue2:#7b98ff;--grad:linear-gradient(135deg,#4f6ef7,#7b8dff);--ok:#18a05a;--bad:#e2574c;--warn:#f5a623;--bg:#eef2fb;--card:#fff;--ink:#1e2a48;--soft:#eaf0ff;--muted:#6b7690;--line:#e9eefb;--sh:0 10px 30px rgba(40,64,140,.08),0 2px 6px rgba(40,64,140,.04);--sh2:0 6px 18px rgba(40,64,140,.06),0 1px 2px rgba(40,64,140,.04);--r:22px}
+:root{--blue:#7b5bd6;--blue2:#a48ee6;--grad:linear-gradient(135deg,#7b5bd6,#9d86e6);--ok:#18a05a;--bad:#e2574c;--warn:#f5a623;--bg:#f1eefb;--card:#fff;--ink:#26224a;--soft:#efeafb;--muted:#6f6a86;--line:#ece8f8;--sh:0 10px 30px rgba(40,64,140,.08),0 2px 6px rgba(40,64,140,.04);--sh2:0 6px 18px rgba(40,64,140,.06),0 1px 2px rgba(40,64,140,.04);--r:22px}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 :focus-visible{outline:3px solid #ffae33;outline-offset:2px;border-radius:8px}
 body.big{zoom:1.18}
@@ -447,7 +447,7 @@ function scQuiz(){
   view.innerHTML=h;
   if(q.type==='vocab')return renderFlash(q);
   if(q.type==='reading'){const p=passById[q.passageId];if(p&&p.hasText&&p.text){const pv=$(`<div class="passage">${tapWords(p.text)}</div>`);pv.addEventListener('click',e=>{if(e.target.classList.contains('wd'))collectWord(e.target.textContent);});view.appendChild(pv);view.appendChild($('<div class="wdhint">💡 點文章裡的單字 → 加入「我的單字」練習</div>'));}}
-  view.appendChild($(`<div class="stem">${esc(q.stem).replace(/___+/g,'<span style="color:#4f7cff">＿＿</span>')}</div>`));
+  view.appendChild($(`<div class="stem">${esc(q.stem).replace(/___+/g,'<span style="color:var(--blue)">＿＿</span>')}</div>`));
   const sp=$(`<button class="btn ghost" style="width:auto;padding:6px 12px;font-size:13px;margin:0 0 10px">🔊 唸題目</button>`); sp.onclick=()=>{sp.style.opacity='.5';speak(enOf(q.stem));setTimeout(()=>sp.style.opacity='1',450);}; view.appendChild(sp);
   const box=$('<div></div>');
   q.options.forEach((o,i)=>{const b=$(`<button class="opt"><span class="lab">${'ABCD'[i]}</span>${esc(o)}</button>`);b.onclick=()=>answer(q,i,box);box.appendChild(b)});
@@ -478,7 +478,7 @@ function renderFlash(q){
   f.onclick=()=>{ if(flipped)return; flipped=true;   // 只翻一次,避免重複疊出評分按鈕
     f.innerHTML=`<div class="w">${esc(q.word)}</div><div class="z">${esc(q.zh)}</div>${q.example?`<div class="p" style="margin-top:12px">${esc(q.example)}${q.exampleZh?'<br>'+esc(q.exampleZh):''}</div>`:''}`;
     const g=$('<div class="gradeRow"></div>');
-    [['again','😵 不會','#e74c3c'],['good','🙂 會了','#27ae60'],['easy','😎 太簡單','#4f7cff']].forEach(([gr,t,c])=>{const b=$(`<button style="background:${c}">${t}</button>`);b.onclick=()=>gradeVocab(q,gr);g.appendChild(b)});
+    [['again','😵 不會','#e74c3c'],['good','🙂 會了','#27ae60'],['easy','😎 太簡單','#7b5bd6']].forEach(([gr,t,c])=>{const b=$(`<button style="background:${c}">${t}</button>`);b.onclick=()=>gradeVocab(q,gr);g.appendChild(b)});
     view.appendChild(g);};
   view.appendChild(f);
   const sp=$(`<button class="btn sec">🔊 唸這個單字</button>`); sp.onclick=(e)=>{e.stopPropagation();sp.style.opacity='.5';speak(q.word);setTimeout(()=>sp.style.opacity='1',450);}; view.appendChild(sp);

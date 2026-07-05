@@ -1,0 +1,7 @@
+node_modules/
+app/
+data/
+scripts/
+docs/
+*.pyc
+__pycache__/

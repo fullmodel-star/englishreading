@@ -3,5 +3,12 @@ app/
 data/
 scripts/
 docs/
+發布版/
+_封存_舊OCR與版權資料/
+package.json
+package-lock.json
+README.md
+*.bat
 *.pyc
 __pycache__/
+*.md
